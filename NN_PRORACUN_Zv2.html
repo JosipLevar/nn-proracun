@@ -917,12 +917,12 @@
     </div>
 
     <!-- ═══ Data files ═════════════════════════════════════════════════════ -->
-<script src="data/data_trafostanice.js?v=1"></script>
-<script src="data/data_trafo_snage.js?v=1"></script>
-<script src="data/data_katalog_trafo.js?v=1"></script>
-<script src="data/data_katalog_vodovi.js?v=1"></script>
-<script src="data/data_katalog_full.js?v=1"></script>
-<script src="data/data_standard_table.js?v=1"></script>
+<script src="data_trafostanice.js?v=1"></script>
+<script src="data_trafo_snage.js?v=1"></script>
+<script src="data_katalog_trafo.js?v=1"></script>
+<script src="data_katalog_vodovi.js?v=1"></script>
+<script src="data_katalog_full.js?v=1"></script>
+<script src="data_standard_table.js?v=1"></script>
 <!-- ════════════════════════════════════════════════════════════════════ -->
 <script>
 
@@ -930,7 +930,7 @@
         // ║  KONFIGURACIJA PRISTUPA — mijenjaj samo ova dva retka           ║
         // ╠══════════════════════════════════════════════════════════════════╣
         const _TOKEN   = 'TEST-1234';        // ← token
-        const _EXPIRY  = '2026-03-17T00:01:00';       // ← datum isteka (YYYY-MM-DD)
+        const _EXPIRY  = '2026-03-10T14:04:00';       // ← datum isteka (YYYY-MM-DD)
         // ╚══════════════════════════════════════════════════════════════════╝
 
         (function initTokenGuard(){
@@ -959,6 +959,7 @@
         // ── Auto-refresh kad istekne licenca ─────────────────────────────────
         setInterval(function(){
             const exp = new Date(_EXPIRY);
+            exp.setHours(23,59,59,999);
             if(new Date() > exp){
                 location.reload(true); // true = force reload, ignores cache
             }
@@ -3045,7 +3046,7 @@ ${content}</body>
                     const dU=(Pi*k.Rd+Qi*k.Xd)*(d.L_m/n)/400;
                     const Uk=U-dU;                  // Pi<0→dU<0→Uk>U (raste)
                     const pad_pct=+((Uk-U_trafo_max)/400*100).toFixed(2);
-                    const dU_ok=(jeProizvodjac?Uk<=440:Uk<=420)&&Uk>=360;
+                    const dU_ok=Uk<=420&&Uk>=360;
                     U=Uk;
                     const Iv=Math.sqrt(Pi*Pi+Qi*Qi)*1000/(Math.sqrt(3)*400); // BF2
                     const opt=+(Iv/Idoz*100).toFixed(2);
@@ -3677,7 +3678,7 @@ ${content}</body>
         function _setRefType(type){
             window._refType=type;
             document.getElementById('fEOTRP_label').textContent=type==='predmet'?'Predmet':'EOTRP';
-            document.getElementById('fEOTRP').placeholder=type==='predmet'?'npr. 7-2024-12345':'npr. HR-ES-2024-12345';
+            document.getElementById('fEOTRP').placeholder='Unesi broj';
             document.getElementById('toggleEOTRP').style.background=type==='eotrp'?'var(--accent)':'transparent';
             document.getElementById('toggleEOTRP').style.color=type==='eotrp'?'#fff':'var(--muted)';
             document.getElementById('togglePredmet').style.background=type==='predmet'?'var(--accent)':'transparent';
