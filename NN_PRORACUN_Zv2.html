@@ -885,7 +885,7 @@
     <div class="proracun-forma-section" id="proracunForma">
         <div class="forma-header">
             <h2 id="formaTitle">KpNN — Kupac</h2>
-            <button class="button button-secondary no-print" id="closeProracunBtn" onclick="closeProracun()" style="padding:6px 14px;font-size:12px;">✕ Zatvori</button>
+            <button onclick="var m=document.getElementById('legendaModal');m.style.display='flex';" style="padding:6px 12px;font-size:12px;background:rgba(37,99,235,0.1);color:var(--accent);border:1px solid var(--accent);border-radius:8px;cursor:pointer;font-weight:600;margin-right:6px;">📖 Legenda</button><button class="button button-secondary no-print" id="closeProracunBtn" onclick="closeProracun()" style="padding:6px 14px;font-size:12px;">✕ Zatvori</button>
         </div>
 
         <!-- STANJE MREŽE TOGGLE — vidljiv samo kad postoji Excel 2 -->
@@ -917,12 +917,12 @@
     </div>
 
     <!-- ═══ Data files ═════════════════════════════════════════════════════ -->
-<script src="data/data_trafostanice.js"></script>
-<script src="data/data_trafo_snage.js"></script>
-<script src="data/data_katalog_trafo.js"></script>
-<script src="data/data_katalog_vodovi.js"></script>
-<script src="data/data_katalog_full.js"></script>
-<script src="data/data_standard_table.js"></script>
+<script src="data_trafostanice.js?v=1"></script>
+<script src="data_trafo_snage.js?v=1"></script>
+<script src="data_katalog_trafo.js?v=1"></script>
+<script src="data_katalog_vodovi.js?v=1"></script>
+<script src="data_katalog_full.js?v=1"></script>
+<script src="data_standard_table.js?v=1"></script>
 <!-- ════════════════════════════════════════════════════════════════════ -->
 <script>
 
@@ -930,7 +930,7 @@
         // ║  KONFIGURACIJA PRISTUPA — mijenjaj samo ova dva retka           ║
         // ╠══════════════════════════════════════════════════════════════════╣
         const _TOKEN   = 'TEST-1234';        // ← token
-        const _EXPIRY  = '2026-03-17T00:02:00';       // ← datum isteka (YYYY-MM-DD)
+        const _EXPIRY  = '2026-03-17T00:01:00';       // ← datum isteka (YYYY-MM-DD)
         // ╚══════════════════════════════════════════════════════════════════╝
 
         (function initTokenGuard(){
@@ -3411,7 +3411,8 @@ ${content}</body>
             const spnnExtra=(_vrsta==='SpNN')?`
                 <div class="forma-group"><label style="font-size:9px">N1F čvora</label><input type="number" class="dn1f" value="0" min="0"></div>
                 <div class="forma-group"><label style="font-size:9px">N3F čvora</label><input type="number" class="dn3f" value="0" min="0"></div>
-                <div class="forma-group"><label style="font-size:9px">P>20 čvora [kW]</label><input type="number" class="dp20" value="0" min="0" step="0.1"></div>
+                <div class="forma-group"><label style="font-size:9px">N&gt;20 čvora</label><input type="number" class="dn20" value="0" min="0"></div>
+                <div class="forma-group"><label style="font-size:9px">P&gt;20 čvora [kW]</label><input type="number" class="dp20" value="0" min="0" step="0.1"></div>
                 ${_tip==='proizvođač'?'<div class="forma-group"><label style="font-size:9px">Pp čvora [kW]</label><input type="number" class="dpp" value="0" min="0" step="0.1"></div>':''}`
             : (_vrsta==='KpNN'&&_tip==='proizvođač') ? '<div class="forma-group"><label style="font-size:9px">Pp čvora [kW]</label><input type="number" class="dpp" value="0" min="0" step="0.1"></div>'
             : ''; 
@@ -3747,5 +3748,38 @@ ${content}</body>
     <div id="katalogFooter"><button onclick="closeKatalogModal()" style="padding:6px 18px;border:1px solid var(--border);background:var(--card);border-radius:6px;cursor:pointer;font-size:13px;">Zatvori</button></div>
   </div>
 </div>
+
+<!-- ═══ Legenda kratica ══════════════════════════════════════════════════════ -->
+<div id="legendaModal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.45);z-index:9998;align-items:center;justify-content:center;">
+  <div style="background:var(--card);border-radius:14px;max-width:500px;width:93%;max-height:85vh;overflow-y:auto;box-shadow:0 12px 40px rgba(0,0,0,0.25);">
+    <div style="display:flex;justify-content:space-between;align-items:center;padding:16px 20px;border-bottom:1px solid var(--border);">
+      <h3 style="margin:0;font-size:15px;color:var(--text);">📖 Legenda kratica</h3>
+      <button onclick="document.getElementById('legendaModal').style.display='none'" style="background:none;border:none;font-size:20px;cursor:pointer;color:var(--text-muted);">✕</button>
+    </div>
+    <div style="padding:16px 20px;font-size:13px;color:var(--text);line-height:1.8;">
+      <div style="font-weight:700;color:var(--accent);margin-bottom:6px;text-transform:uppercase;font-size:11px;letter-spacing:.5px;">Kupci / priključenja</div>
+      <div><b>N1F</b> — Broj jednofaznih kupaca (P ≤ 20 kW)</div>
+      <div><b>N3F</b> — Broj trofaznih kupaca (P ≤ 20 kW)</div>
+      <div><b>N&gt;20</b> — Broj kupaca s priključnom snagom P &gt; 20 kW</div>
+      <div><b>P&gt;20</b> — Suma priključnih snaga kupaca P &gt; 20 kW [kW]</div>
+      <div><b>Pp</b> — Priključna snaga proizvođača [kW]</div>
+      <div style="font-weight:700;color:var(--accent);margin:12px 0 6px;text-transform:uppercase;font-size:11px;letter-spacing:.5px;">Trafostanica / Izvod</div>
+      <div><b>N1F_TS / N1F_izv</b> — Ukupan broj 1F kupaca na TS / izvodu</div>
+      <div><b>N3F_TS / N3F_izv</b> — Ukupan broj 3F kupaca na TS / izvodu</div>
+      <div><b>N&gt;20_TS / N&gt;20_izv</b> — Ukupan broj P&gt;20 kW kupaca na TS / izvodu</div>
+      <div><b>ΣP&gt;20_TS / ΣP&gt;20_izv</b> — Suma snaga P&gt;20 kW kupaca na TS / izvodu [kW]</div>
+      <div><b>Σ Pp_TS / Σ Pp_izv</b> — Suma snaga proizvođača na TS / izvodu [kW]</div>
+      <div style="font-weight:700;color:var(--accent);margin:12px 0 6px;text-transform:uppercase;font-size:11px;letter-spacing:.5px;">Proračun</div>
+      <div><b>KpNN</b> — Kabelska priključna NN mreža</div>
+      <div><b>SpNN</b> — Srednje složena priključna NN mreža</div>
+      <div><b>Ib</b> — Vršna struja (računska) [A]</div>
+      <div><b>Iz</b> — Dozvoljena trajna struja vodiča [A]</div>
+      <div><b>Δu</b> — Pad napona [%]</div>
+      <div><b>Δu_dop</b> — Dopušteni pad napona [%]</div>
+      <div><b>P1</b> — Mjesto priključenja (čvorište)</div>
+    </div>
+  </div>
+</div>
+<!-- ══════════════════════════════════════════════════════════════════════════ -->
 </body>
 </html>
