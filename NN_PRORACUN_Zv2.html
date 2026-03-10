@@ -930,7 +930,7 @@
         // ║  KONFIGURACIJA PRISTUPA — mijenjaj samo ova dva retka           ║
         // ╠══════════════════════════════════════════════════════════════════╣
         const _TOKEN   = 'TEST-1234';        // ← token
-        const _EXPIRY  = '2026-03-10T13:55:00';
+        const _EXPIRY  = '2026-03-10T14:02:00'       // ← datum isteka (YYYY-MM-DD)
         // ╚══════════════════════════════════════════════════════════════════╝
 
         (function initTokenGuard(){
@@ -955,6 +955,16 @@
                 document.getElementById('tokenOverlay').style.display='none';document.body.style.overflow='';
             }
         })();
+
+        // ── Auto-refresh kad istekne licenca ─────────────────────────────────
+        setInterval(function(){
+            const exp = new Date(_EXPIRY);
+            exp.setHours(23,59,59,999);
+            if(new Date() > exp){
+                location.reload(true); // true = force reload, ignores cache
+            }
+        }, 60000); // provjera svake minute
+        // ─────────────────────────────────────────────────────────────────────
 
         function checkToken(){
             const exp = new Date(_EXPIRY);
