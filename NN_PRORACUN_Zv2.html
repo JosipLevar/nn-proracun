@@ -959,7 +959,6 @@
         // ── Auto-refresh kad istekne licenca ─────────────────────────────────
         setInterval(function(){
             const exp = new Date(_EXPIRY);
-            exp.setHours(23,59,59,999);
             if(new Date() > exp){
                 location.reload(true); // true = force reload, ignores cache
             }
