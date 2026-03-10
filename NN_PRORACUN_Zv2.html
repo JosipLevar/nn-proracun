@@ -917,12 +917,12 @@
     </div>
 
     <!-- ═══ Data files ═════════════════════════════════════════════════════ -->
-<script src="data_trafostanice.js?v=1"></script>
-<script src="data_trafo_snage.js?v=1"></script>
-<script src="data_katalog_trafo.js?v=1"></script>
-<script src="data_katalog_vodovi.js?v=1"></script>
-<script src="data_katalog_full.js?v=1"></script>
-<script src="data_standard_table.js?v=1"></script>
+<script src="data/data_trafostanice.js?v=1"></script>
+<script src="data/data_trafo_snage.js?v=1"></script>
+<script src="data/data_katalog_trafo.js?v=1"></script>
+<script src="data/data_katalog_vodovi.js?v=1"></script>
+<script src="data/data_katalog_full.js?v=1"></script>
+<script src="data/data_standard_table.js?v=1"></script>
 <!-- ════════════════════════════════════════════════════════════════════ -->
 <script>
 
@@ -930,7 +930,7 @@
         // ║  KONFIGURACIJA PRISTUPA — mijenjaj samo ova dva retka           ║
         // ╠══════════════════════════════════════════════════════════════════╣
         const _TOKEN   = 'TEST-1234';        // ← token
-        const _EXPIRY  = '2026-03-10T14:04:00';       // ← datum isteka (YYYY-MM-DD)
+        const _EXPIRY  = '2026-03-17T00:04:00';       // ← datum isteka (YYYY-MM-DD)
         // ╚══════════════════════════════════════════════════════════════════╝
 
         (function initTokenGuard(){
@@ -959,7 +959,6 @@
         // ── Auto-refresh kad istekne licenca ─────────────────────────────────
         setInterval(function(){
             const exp = new Date(_EXPIRY);
-            exp.setHours(23,59,59,999);
             if(new Date() > exp){
                 location.reload(true); // true = force reload, ignores cache
             }
