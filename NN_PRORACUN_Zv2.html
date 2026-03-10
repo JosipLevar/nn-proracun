@@ -938,7 +938,6 @@
             const stored = localStorage.getItem('nn_token');
             // Provjera isteka (do kraja dana po lokalnom vremenu)
             const exp = new Date(_EXPIRY);
-            exp.setHours(23,59,59,999);
             const expired = new Date() > exp;
 
             if(expired){
