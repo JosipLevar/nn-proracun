@@ -917,12 +917,12 @@
     </div>
 
     <!-- ═══ Data files ═════════════════════════════════════════════════════ -->
-<script src="data/data_trafostanice.js?v=1"></script>
-<script src="data/data_trafo_snage.js?v=1"></script>
-<script src="data/data_katalog_trafo.js?v=1"></script>
-<script src="data/data_katalog_vodovi.js?v=1"></script>
-<script src="data/data_katalog_full.js?v=1"></script>
-<script src="data/data_standard_table.js?v=1"></script>
+<script src="data_trafostanice.js?v=1"></script>
+<script src="data_trafo_snage.js?v=1"></script>
+<script src="data_katalog_trafo.js?v=1"></script>
+<script src="data_katalog_vodovi.js?v=1"></script>
+<script src="data_katalog_full.js?v=1"></script>
+<script src="data_standard_table.js?v=1"></script>
 <!-- ════════════════════════════════════════════════════════════════════ -->
 <script>
 
@@ -930,7 +930,7 @@
         // ║  KONFIGURACIJA PRISTUPA — mijenjaj samo ova dva retka           ║
         // ╠══════════════════════════════════════════════════════════════════╣
         const _TOKEN   = 'TEST-1234';        // ← token
-        const _EXPIRY  = '2026-03-17T00:04:00';       // ← datum isteka (YYYY-MM-DD)
+        const _EXPIRY  = '2026-03-10T14:04:00';       // ← datum isteka (YYYY-MM-DD)
         // ╚══════════════════════════════════════════════════════════════════╝
 
         (function initTokenGuard(){
@@ -959,6 +959,7 @@
         // ── Auto-refresh kad istekne licenca ─────────────────────────────────
         setInterval(function(){
             const exp = new Date(_EXPIRY);
+            exp.setHours(23,59,59,999);
             if(new Date() > exp){
                 location.reload(true); // true = force reload, ignores cache
             }
@@ -3191,6 +3192,51 @@ ${content}</body>
             return '<option value="">— Cijeli transformator —</option>'+kr.map(k=>`<option value="${k}">${k}</option>`).join('');
         }
 
+                function _legenda(isSpNN, isProizvodjac) {
+            const common = [
+                ['N1F', 'Broj jednofaznih priključaka (P &le; 20 kW)'],
+                ['N3F', 'Broj trofaznih priključaka (P &le; 20 kW)'],
+                ['N&gt;20', 'Broj priključaka P &gt; 20 kW'],
+                ['&Sigma;P&gt;20', 'Ukupna priključna snaga potrošača P &gt; 20 kW [kW]'],
+                ['TS', 'Trafostanica'],
+                ['f<sub>1F</sub>', 'Faktor istodobnosti jednofaznih potrošača'],
+                ['f<sub>3F</sub>', 'Faktor istodobnosti potrošača P &gt; 20 kW'],
+                ['P<sub>izvod</sub>', 'Proračunsko opterećenje izvoda [kW]'],
+                ['S<sub>TS</sub>', 'Prividna snaga trafostanice [kVA]'],
+                ['S<sub>n</sub>', 'Nazivna snaga transformatora [kVA]'],
+                ['u<sub>r</sub>', 'Otporna komponenta napona kratkog spoja [%]'],
+                ['u<sub>x</sub>', 'Reaktivna komponenta napona kratkog spoja [%]'],
+                ['&Delta;u%', 'Pad napona na dionici [%]'],
+                ['U', 'Napon na kraju dionice [V / %U<sub>n</sub>]'],
+                ['I', 'Struja opterećenja dionice [A]'],
+                ['I<sub>dop</sub>', 'Dopuštena trajna struja kabela [A]'],
+                ['Opt.', 'Opterećenje kabela [%]'],
+                ['R', 'Otpor dionice [&Omega;]'],
+                ['X', 'Reaktancija dionice [&Omega;]'],
+            ];
+            const ppExtra = [
+                ['P<sub>p</sub>', 'Priključna snaga proizvođača [kW]'],
+                ['P<sub>p,izv</sub>', 'Ukupna P<sub>p</sub> proizvođača na izvodu [kW]'],
+                ['P<sub>p,TS</sub>', 'Ukupna P<sub>p</sub> proizvođača na trafostanici [kW]'],
+                ['P<sub>TS,min</sub>', 'Minimalno opterećenje trafostanice [kW]'],
+                ['P<sub>izv,min</sub>', 'Minimalno opterećenje izvoda [kW]'],
+                ['maxNap', 'Maksimalni napon na vodu [%U<sub>n</sub>]'],
+            ];
+            const pvExtra = [
+                ['PV', 'Priključni vod (od razvodnog ormara do mjesta priključka)'],
+                ['U<sub>čvor</sub>', 'Napon na čvorištu priključenja [V]'],
+                ['U<sub>P1</sub>', 'Napon na kraju priključnog voda P1 [V]'],
+            ];
+            let rows = common;
+            if (isProizvodjac) rows = rows.concat(ppExtra);
+            if (isSpNN) rows = rows.concat(pvExtra);
+            return '<table style="width:100%;border-collapse:collapse;">' +
+                rows.map(([k,v]) =>
+                    `<tr><td style="padding:1px 8px 1px 0;font-weight:700;white-space:nowrap;vertical-align:top;">${k}</td>`+
+                    `<td style="padding:1px 0;color:var(--text-muted);">${v}</td></tr>`
+                ).join('') +
+                '</table>';
+        }
         function openProracun(vrsta,tip){
             _vrsta=vrsta;_tip=tip;_dc=1;
             const fr=(globalData||[]).find(r=>parsePolje(r.Polje).trafostanica);
@@ -3234,7 +3280,7 @@ ${content}</body>
                             <input type="number" id="fPp_TS" value="${ku0.Pp_TS.toFixed(2)}" readonly></div>`:''}
                     </div>
                 </div>`:'';
-        const tsIzvodSekcija=isSpNN?`
+        const tsIzvodSekcija=(isSpNN||!isProizvodjac)?`
                 <div style="padding:12px;background:rgba(37,99,235,0.06);border:1px solid var(--accent);border-radius:8px;margin-bottom:4px;">
                     <h3 style="font-size:11px;font-weight:700;color:var(--accent);margin:0 0 10px;text-transform:uppercase;letter-spacing:.5px;">
                         Broj kupaca &mdash; Izvod <span class="auto-badge">&#9679;AUTO</span>
@@ -3272,15 +3318,15 @@ ${content}</body>
                     </h3>
                     <div class="forma-grid">
                         <div class="forma-group"><label>Broj OMM P≤20 kW</label>
-                            <input type="number" id="fGradBr1F" value="0" min="0" placeholder="0"></div>
+                            <input type="number" id="fGradBr1F" min="0" placeholder="0"></div>
                         <div class="forma-group"><label>Suma P≤20 kW [kW]</label>
-                            <input type="number" id="fGradP1F" value="0" min="0" step="0.1" placeholder="kW"></div>
+                            <input type="number" id="fGradP1F" min="0" step="0.1" placeholder="kW"></div>
                         <div class="forma-group"><label>Broj OMM P&gt;20 kW</label>
-                            <input type="number" id="fGradBr20" value="0" min="0" placeholder="0"></div>
+                            <input type="number" id="fGradBr20" min="0" placeholder="0"></div>
                         <div class="forma-group"><label>Suma P&gt;20 kW [kW]</label>
-                            <input type="number" id="fGradP20" value="0" min="0" step="0.1" placeholder="kW"></div>
+                            <input type="number" id="fGradP20" min="0" step="0.1" placeholder="kW"></div>
                         <div class="forma-group"><label>Priključna snaga proizvođača [kW]</label>
-                            <input type="number" id="fGradPp" value="0" min="0" step="0.1" placeholder="kW"></div>
+                            <input type="number" id="fGradPp" min="0" step="0.1" placeholder="kW"></div>
                     </div>
                 </div>`:`
                 <div style="padding:12px;border:1px solid var(--border);border-radius:8px;margin-top:4px;">
@@ -3289,7 +3335,7 @@ ${content}</body>
                     </h3>
                     <div class="forma-grid">
                         <div class="forma-group"><label>Priključna snaga proizvođača [kW]</label>
-                            <input type="number" id="fGradPp" value="0" min="0" step="0.1" placeholder="kW"></div>
+                            <input type="number" id="fGradPp" min="0" step="0.1" placeholder="kW"></div>
                     </div>
                 </div>`):`
                 <div style="padding:12px;border:1px solid var(--border);border-radius:8px;margin-top:4px;">
@@ -3298,13 +3344,13 @@ ${content}</body>
                     </h3>
                     <div class="forma-grid">
                         <div class="forma-group"><label>Broj OMM P≤20 kW</label>
-                            <input type="number" id="fGradBr1F" value="0" min="0" placeholder="0"></div>
+                            <input type="number" id="fGradBr1F" min="0" placeholder="0"></div>
                         <div class="forma-group"><label>Suma P≤20 kW [kW]</label>
-                            <input type="number" id="fGradP1F" value="0" min="0" step="0.1" placeholder="kW"></div>
+                            <input type="number" id="fGradP1F" min="0" step="0.1" placeholder="kW"></div>
                         <div class="forma-group"><label>Broj OMM P>20 kW</label>
-                            <input type="number" id="fGradBr20" value="0" min="0" placeholder="0"></div>
+                            <input type="number" id="fGradBr20" min="0" placeholder="0"></div>
                         <div class="forma-group"><label>Suma P>20 kW [kW]</label>
-                            <input type="number" id="fGradP20" value="0" min="0" step="0.1" placeholder="kW"></div>
+                            <input type="number" id="fGradP20" min="0" step="0.1" placeholder="kW"></div>
                     </div>
                 </div>`;
 
@@ -3317,7 +3363,6 @@ ${content}</body>
                             <div class="forma-group"><label>Br. par.</label><input type="number" class="dp" value="1" min="1"></div>
                             <div class="forma-group"><label>N1F čvora</label><input type="number" class="dn1f" value="0" min="0"></div>
                             <div class="forma-group"><label>N3F čvora</label><input type="number" class="dn3f" value="0" min="0"></div>
-                            <div class="forma-group"><label>N>20 čvora</label><input type="number" class="dn20" value="0" min="0"></div>
                             <div class="forma-group"><label>P>20 čvora [kW]</label><input type="number" class="dp20" value="0" min="0" step="0.1"></div>
                             ${isProizvodjac?`<div class="forma-group"><label>Pp čvora [kW]</label><input type="number" class="dpp" value="0" min="0" step="0.1"></div>`:''}
                             <button class="btn-remove-dionica" onclick="removeDionica(0)">✕</button>
@@ -3365,7 +3410,12 @@ ${content}</body>
                     <button class="btn-add-dionica" onclick="addDionica()">+ Dodaj dionicu</button>
                 </div>
                 ${isSpNN?`<div class="dionice-section" style="margin-top:12px;padding:12px;background:rgba(37,99,235,0.04);border:1px solid var(--accent);border-radius:8px;"><h3 style="font-size:12px;font-weight:700;color:var(--accent);margin:0 0 10px;">Priključni vod — mjesto priključenja (P1)</h3><div style="display:flex;gap:8px;flex-wrap:wrap;align-items:flex-end;"><div class="forma-group" style="flex:0 0 110px;"><label>Čvorište priklj.</label><input type="number" id="fCvorPrikl" value="1" min="1" style="text-align:center;"></div><div class="forma-group" style="flex:1;min-width:120px;"><label>Tip kabela</label><select id="fPVTip" onchange="_onKabelChange(this)">${_kOpts()}</select></div><div class="forma-group" style="flex:0 0 90px;"><label>Duljina [m]</label><input type="number" id="fPVDuljina" placeholder="m" min="1"></div><div class="forma-group" style="flex:0 0 70px;"><label>Br. par.</label><input type="number" id="fPVNpar" value="1" min="1"></div></div></div>`:''}
-                <button class="izracunaj-btn" onclick="izracunaj()">⚡ Izračunaj ${vrsta}</button>`;
+    
+                <details style="margin-top:14px;border:1px solid var(--border);border-radius:8px;">
+                    <summary style="padding:7px 12px;cursor:pointer;font-size:11px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:.5px;list-style:none;">&#128218; Legenda kratica &nbsp;<span style="font-weight:400;font-size:10px;">(klikni za prikaz)</span></summary>
+                    <div style="padding:8px 14px;font-size:11px;line-height:1.7;">${_legenda(isSpNN,isProizvodjac)}</div>
+                </details>
+            <button class="izracunaj-btn" onclick="izracunaj()">⚡ Izračunaj ${vrsta}</button>`;
             document.getElementById('proracunForma').classList.add('active');
             document.getElementById('proracunRezultat').classList.remove('active');
             document.getElementById('proracunForma').scrollIntoView({behavior:'smooth'});
@@ -3432,9 +3482,8 @@ ${content}</body>
                 const n1fNode=parseInt(r.querySelector('.dn1f')?.value)||0;
                 const n3fNode=parseInt(r.querySelector('.dn3f')?.value)||0;
                 const p20Node=parseFloat(r.querySelector('.dp20')?.value)||0;
-                const n20Node=parseInt(r.querySelector('.dn20')?.value)||0;
                 const ppNode=parseFloat(r.querySelector('.dpp')?.value)||0;
-                if(tip&&L_m>0)dionice.push({tip,L_m,n_par,n1fNode,n3fNode,n20Node,p20Node,ppNode});
+                if(tip&&L_m>0)dionice.push({tip,L_m,n_par,n1fNode,n3fNode,p20Node,ppNode});
             });
             if(!dionice.length){alert('Unesi barem jednu dionicu!');return;}
             const ku=computeKupci(_ps.tsSifra,k,sk);
@@ -3477,10 +3526,6 @@ ${content}</body>
                             errs.push(`N3F: zbroj čvorišta (${sum3F}) ≠ broj na izvodu (${vN3F})`);
                         if(Math.abs(sumP20-par.P20)>0.5)
                             errs.push(`P>20 kW: zbroj čvorišta (${sumP20.toFixed(1)} kW) ≠ iznos na izvodu (${par.P20.toFixed(1)} kW)`);
-                        const sumN20=dionice.reduce((s,d)=>s+(d.n20Node||0),0);
-                        const vN20=Math.round(par.N20);
-                        if(sumN20!==vN20)
-                            errs.push(`N>20: zbroj čvorišta (${sumN20}) ≠ broj na izvodu (${vN20})`);
                     }
                     // SpNN i KpNN proizvođač: Pp čvorova vs Pp izvoda
                     if(_tip==='proizvođač' && dionice.length>0){
