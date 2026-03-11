@@ -930,7 +930,7 @@
         // ║  KONFIGURACIJA PRISTUPA — mijenjaj samo ova dva retka           ║
         // ╠══════════════════════════════════════════════════════════════════╣
         const _TOKEN   = 'TEST-1234';        // ← token
-        const _EXPIRY  = '2026-03-17T00:01:00';       // ← datum isteka (YYYY-MM-DD)
+        const _EXPIRY  = '2026-03-17T00:07:00';       // ← datum isteka (YYYY-MM-DD)
         // ╚══════════════════════════════════════════════════════════════════╝
 
         (function initTokenGuard(){
@@ -2859,7 +2859,7 @@ ${content}</body>
         // ===== KUPCI =====
         function computeKupci(tsSifra,trafoKod,sk) {
             let rows=(globalData||[]).filter(r=>(r['Status MM']||'').toLowerCase().includes('instalacija potpuno operativna'));
-            if(window._stanjeMreze==='buduce'&&globalPredvidjanjaData?.length) globalPredvidjanjaData.forEach(p=>rows.push({Polje:p.Izvod||'',Snaga:p['Snaga kW - Potrošnja']||0,Proizvodnja:p['Snaga kW – Proizvodnja']||0,'Status MM':'Instalacija potpuno operativna'}));
+            if(window._stanjeMreze==='buduce'&&globalPredvidjanjaData?.length){const _futIds=new Set(globalPredvidjanjaData.map(p=>String(Math.round(parseFloat(p.Instalacija)||0))));rows=rows.filter(r=>!_futIds.has(String(Math.round(parseFloat(r.Instalacija)||0))));globalPredvidjanjaData.forEach(p=>rows.push({Polje:p.Izvod||'',Instalacija:p.Instalacija,Snaga:p['Snaga kW - Potrošnja']||0,Proizvodnja:p['Snaga kW – Proizvodnja']||0,'Status MM':'Instalacija potpuno operativna'}));}
             const jf=new Set(parseSnageInput(document.getElementById('jednofazneInput').value));
             const tf=new Set(parseSnageInput(document.getElementById('trofazneInput').value));
             // Klasifikacija identična processData():
@@ -3233,8 +3233,7 @@ ${content}</body>
                 rows.map(([k,v]) =>
                     `<tr><td style="padding:1px 8px 1px 0;font-weight:700;white-space:nowrap;vertical-align:top;">${k}</td>`+
                     `<td style="padding:1px 0;color:var(--text-muted);">${v}</td></tr>`
-                ).join('') +
-                '</table>';
+                ).join('') + '</table>';
         }
         function openProracun(vrsta,tip){
             _vrsta=vrsta;_tip=tip;_dc=1;
