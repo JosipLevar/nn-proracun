@@ -1486,7 +1486,7 @@
                     promjene_byRazvod[key].delta1F += delta1F;
                     promjene_byRazvod[key].delta3F += delta3F;
                     promjene_byRazvod[key].noviPotr20kw += jeVeliPotr ? 1 : 0;
-                    promjene_byRazvod[key].delta20kwSnaga += (bilaVeciOd20 || jeVeciOd20) ? (preseljenje ? novaPotrosnjaExcel2 : deltaPotrosnja) : 0;
+                    promjene_byRazvod[key].delta20kwSnaga += preseljenje ? (jeVeciOd20 ? novaPotrosnjaExcel2 : 0) : (!bilaVeciOd20 && jeVeciOd20) ? novaPotrosnjaExcel2 : (bilaVeciOd20 && !jeVeciOd20) ? -staraPotrosnja : (bilaVeciOd20 && jeVeciOd20) ? deltaPotrosnja : 0;
                 } else {
                     // NN RAZVOD - dodaj na razini strujnog kruga
                     const key = parsed.key_exact;
@@ -1532,7 +1532,7 @@
                     promjene_byKrug[key].delta1F += delta1F;
                     promjene_byKrug[key].delta3F += delta3F;
                     promjene_byKrug[key].noviPotr20kw += jeVeliPotr ? 1 : 0;
-                    promjene_byKrug[key].delta20kwSnaga += (bilaVeciOd20 || jeVeciOd20) ? (preseljenje ? novaPotrosnjaExcel2 : deltaPotrosnja) : 0;
+                    promjene_byKrug[key].delta20kwSnaga += preseljenje ? (jeVeciOd20 ? novaPotrosnjaExcel2 : 0) : (!bilaVeciOd20 && jeVeciOd20) ? novaPotrosnjaExcel2 : (bilaVeciOd20 && !jeVeciOd20) ? -staraPotrosnja : (bilaVeciOd20 && jeVeciOd20) ? deltaPotrosnja : 0;
                 }
             });
 
