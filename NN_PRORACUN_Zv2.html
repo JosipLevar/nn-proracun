@@ -2859,7 +2859,7 @@ ${content}</body>
         // ===== KUPCI =====
         function computeKupci(tsSifra,trafoKod,sk) {
             let rows=(globalData||[]).filter(r=>(r['Status MM']||'').toLowerCase().includes('instalacija potpuno operativna'));
-            if(window._stanjeMreze==='buduce'&&globalPredvidjanjaData?.length){const _futIds=new Set(globalPredvidjanjaData.map(p=>String(Math.round(parseFloat(p.Instalacija)||0))));rows=rows.filter(r=>!_futIds.has(String(Math.round(parseFloat(r.Instalacija)||0))));globalPredvidjanjaData.forEach(p=>rows.push({Polje:p.Izvod||'',Instalacija:p.Instalacija,Snaga:p['Snaga kW - Potrošnja']||0,Proizvodnja:p['Snaga kW – Proizvodnja']||0,'Status MM':'Instalacija potpuno operativna'}));}
+            if(window._stanjeMreze==='buduce'&&globalPredvidjanjaData?.length){const predFilt=globalPredvidjanjaData.filter(p=>!Object.keys(p).some(k=>(k.includes('Status')||k.includes('status'))&&String(p[k]||'').trim().toUpperCase().includes('SAV')));const idxById=new Map();rows.forEach((r,i)=>{if(r['Instalacija'])idxById.set(String(r['Instalacija']),i);});predFilt.forEach(p=>{const id=p['Instalacija'];const newRow={Polje:p.Izvod||'',Instalacija:id,Snaga:p['Snaga kW - Potrošnja']||0,Proizvodnja:p['Snaga kW – Proizvodnja']||0,'Status MM':'Instalacija potpuno operativna'};const idStr=(id&&String(id).trim()!==''&&String(id)!=='NaN')?String(id):null;if(idStr&&idxById.has(idStr)){rows[idxById.get(idStr)]=newRow;}else{rows.push(newRow);}});}
             const jf=new Set(parseSnageInput(document.getElementById('jednofazneInput').value));
             const tf=new Set(parseSnageInput(document.getElementById('trofazneInput').value));
             // Klasifikacija identična processData():
