@@ -3045,7 +3045,7 @@ ${content}</body>
                     const dU=(Pi*k.Rd+Qi*k.Xd)*(d.L_m/n)/400;
                     const Uk=U-dU;                  // Pi<0→dU<0→Uk>U (raste)
                     const pad_pct=+((Uk-U_trafo_max)/400*100).toFixed(2);
-                    const dU_ok=Uk<=420&&Uk>=360;
+                    const dU_ok=Uk<=440&&Uk>=360;
                     U=Uk;
                     const Iv=Math.sqrt(Pi*Pi+Qi*Qi)*1000/(Math.sqrt(3)*400); // BF2
                     const opt=+(Iv/Idoz*100).toFixed(2);
@@ -3435,6 +3435,15 @@ ${content}</body>
                 const ku=computeKupci(_ps.tsSifra,trafoKod,sk);
                 const el=id=>document.getElementById(id);
                 if(el('fPp_izv'))el('fPp_izv').value=(ku.Pp_izv||0).toFixed(2);
+                return;
+            }
+            if(_vrsta==='KpNN'&&_tip==='kupac'){
+                const ku_izv=computeKupci(_ps.tsSifra,trafoKod,sk);
+                const el=id=>document.getElementById(id);
+                if(el('fN1F_izv'))el('fN1F_izv').value=ku_izv.N1F_izv;
+                if(el('fN3F_izv'))el('fN3F_izv').value=ku_izv.N3F_izv;
+                if(el('fN20_izv'))el('fN20_izv').value=ku_izv.N20_izv;
+                if(el('fP20_izv'))el('fP20_izv').value=(ku_izv.P20_izv||0).toFixed(2);
                 return;
             }
             if(_vrsta!=='SpNN')return;
