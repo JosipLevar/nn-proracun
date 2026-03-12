@@ -1813,14 +1813,14 @@
                             transformator: parsed.transformator,
                             transformatorFull: transformatorFull,
                             krug: parsed.krug,
-                            label: `Transformator ${transformatorFull} - Strujni krug ${parsed.krug}`,
+                            label: `Transformator A-${getAlias(parsed.trafostanica,'transformatori',parsed.transformator,data)} - Strujni krug ${getAlias(parsed.trafostanica,'krugovi',parsed.krug,data)}`,
                             parsed: parsed
                         };
                     }
 
                     if (!razvodMap[parsed.razvod].transformatori[parsed.transformator]) {
                         razvodMap[parsed.razvod].transformatori[parsed.transformator] = {
-                            label: `Transformator ${transformatorFull}`,
+                            label: `Transformator A-${getAlias(parsed.trafostanica,'transformatori',parsed.transformator,data)}`,
                             key: transformatorFull,
                             razvod: parsed.razvod,
                             transformator: parsed.transformator,
@@ -3182,18 +3182,36 @@ ${content}</body>
         // ===== UI =====
         let _vrsta='',_tip='',_ps={},_dc=1;
         function _kOpts(cur){return Object.keys(KATALOG_VODOVI).map(k=>`<option value="${k}"${k===cur?' selected':''}>${k}</option>`).join('')+'<option disabled style="color:var(--border)">──────────────</option>'+'<option value="__katalog__" style="color:var(--accent);font-style:italic;">+ Dodaj iz kataloga...</option>';}
+        function _buildAliasMap(ts,data){
+            if(!window._aliasMap)window._aliasMap={};
+            if(window._aliasMap[ts])return;
+            const m={transformatori:{},krugovi:{}};
+            const rows=(data||globalData||[]).map(r=>parsePolje(r.Polje))
+                .filter(p=>p.trafostanica===ts&&p.razvod==='A');
+            [...new Set(rows.filter(p=>p.transformator).map(p=>p.transformator))].sort()
+                .forEach((t,i)=>{m.transformatori[t]=String(i+1).padStart(2,'0');});
+            [...new Set(rows.filter(p=>p.krug).map(p=>p.krug))].sort()
+                .forEach((k,i)=>{m.krugovi[k]=String(i+1).padStart(4,'0');});
+            window._aliasMap[ts]=m;
+        }
+        function getAlias(ts,type,rawCode,data){
+            _buildAliasMap(ts,data);
+            const map=window._aliasMap?.[ts]?.[type];
+            return map?.[rawCode]||rawCode;
+        }
         function _skOpts(ts,tk){
             const baseRows=(globalData||[]).map(r=>({Polje:r.Polje}));
             const futRows=(window._stanjeMreze==='buduce'&&globalPredvidjanjaData?.length)
                 ?globalPredvidjanjaData.map(p=>({Polje:p.Izvod||''})):[];
             const kr=[...new Set([...baseRows,...futRows].map(r=>parsePolje(r.Polje))
                 .filter(p=>p.trafostanica===ts&&p.razvod==='A'&&p.transformator===tk&&p.krug).map(p=>p.krug))].sort();
-            return '<option value="">— Cijeli transformator —</option>'+kr.map(k=>`<option value="${k}">${k}</option>`).join('');
+            return '<option value="">— Cijeli transformator —</option>'+kr.map(k=>`<option value="${k}">${getAlias(ts,'krugovi',k)}</option>`).join('');
         }
 
                 function _legenda(isSpNN, isProizvodjac) {
             const common = [
                 ['N1F', 'Broj jednofaznih priključaka (P &le; 20 kW)'],
+                ['N3F', 'Broj trofazni; 20 kW)'],
                 ['N3F', 'Broj trofaznih priključaka (P &le; 20 kW)'],
                 ['N&gt;20', 'Broj priključaka P &gt; 20 kW'],
                 ['&Sigma;P&gt;20', 'Ukupna priključna snaga potrošača P &gt; 20 kW [kW]'],
@@ -3391,7 +3409,7 @@ ${content}</body>
                     <div class="forma-group"><label>Trafostanica <span class="auto-badge">●AUTO</span></label><input type="text" id="fNazivTS" value="${naziv}" readonly></div>
                     <div class="forma-group"><label>U1 [kV] <span class="auto-badge">●AUTO</span></label><input type="number" id="fU1" value="${U1||''}" readonly></div>
                     <div class="forma-group"><label>Transformator</label>
-                        <select id="fTrafo" onchange="onTC()">${ks.map(k=>`<option value="${k}">${trafoMap[k].label} — A-${k} (${trafoMap[k].Sn} kVA)</option>`).join('')}</select></div>
+                        <select id="fTrafo" onchange="onTC()">${ks.map(k=>`<option value="${k}">${trafoMap[k].label} — A-${getAlias(_ps.tsSifra,'transformatori',k)} (${trafoMap[k].Sn} kVA)</option>`).join('')}</select></div>
                     <div class="forma-group"><label>S [kVA] <span class="auto-badge">●AUTO</span></label><input type="number" id="fSn" value="${trafoMap[fk]?.Sn||''}" readonly></div>
                     <div class="forma-group"><label>Strujni krug (izvod)</label><select id="fSK" onchange="onSKChange()">${_skOpts(ts,fk)}</select></div>
                     ${fStdHtml}
