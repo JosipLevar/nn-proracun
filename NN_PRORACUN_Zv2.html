@@ -1040,7 +1040,27 @@
 
 
         
-                let globalData = null;
+                // ═══════════════════════════════════════════════════════════════════════
+        // GIS ALIAS MAPA — dodaj ručno za svaku TS uvezenu iz GIS-a
+        // Format: 'tsSifra': {
+        //   transformatori: { 'GIS_kod': 'alias_2zn' },
+        //   krugovi:        { 'GIS_kod': 'alias_4zn' }
+        // }
+        // Primjer:
+        // '1-4001-P105342141': {
+        //     transformatori: { '69': '01' },
+        //     krugovi:        { '5862': '0004', '3211': '0001' }
+        // },
+        // ═══════════════════════════════════════════════════════════════
+        const GIS_ALIAS_MAP = {
+             '1-4001-P20005479': {
+        transformatori: { '98': '01' , '99': '02'},
+        krugovi:        { '3495': '0001', '3500': '0002', '3505': '0003', '3510': '0004', '3515': '0005', '3520': '0006', '3525': '0007', '3530': '0008', '3535': '0009', '3540': '0010', '3545': '0011', '3550': '0012', '3555': '0013', '3560': '0014', '3565': '0015', '3570': '0016', '3575': '0017', '3580': '0018', '3585': '0019', '3590': '0020', '3501': '0001', '3506': '0002', '3511': '0003', '3516': '0004', '3521': '0005', '3526': '0006', '3531': '0007', '3536': '0008', '3541': '0009', '3546': '0010', '3551': '0011', '3556': '0012', '3561': '0013', '3566': '0014', '3571': '0015', '3576': '0016', '3581': '0017', '3586': '0018', '3591': '0019', '3596': '0020' }
+                                }
+
+        };
+
+        let globalData = null;
         let currentFilterValue = 'svi';
         let currentFilterType = 'all';
         let globalTrafoKrugMap = {};
@@ -3182,22 +3202,8 @@ ${content}</body>
         // ===== UI =====
         let _vrsta='',_tip='',_ps={},_dc=1;
         function _kOpts(cur){return Object.keys(KATALOG_VODOVI).map(k=>`<option value="${k}"${k===cur?' selected':''}>${k}</option>`).join('')+'<option disabled style="color:var(--border)">──────────────</option>'+'<option value="__katalog__" style="color:var(--accent);font-style:italic;">+ Dodaj iz kataloga...</option>';}
-        function _buildAliasMap(ts,data){
-            if(!window._aliasMap)window._aliasMap={};
-            if(window._aliasMap[ts])return;
-            const m={transformatori:{},krugovi:{}};
-            const rows=(data||globalData||[]).map(r=>parsePolje(r.Polje))
-                .filter(p=>p.trafostanica===ts&&p.razvod==='A');
-            [...new Set(rows.filter(p=>p.transformator).map(p=>p.transformator))].sort()
-                .forEach((t,i)=>{m.transformatori[t]=String(i+1).padStart(2,'0');});
-            [...new Set(rows.filter(p=>p.krug).map(p=>p.krug))].sort()
-                .forEach((k,i)=>{m.krugovi[k]=String(i+1).padStart(4,'0');});
-            window._aliasMap[ts]=m;
-        }
-        function getAlias(ts,type,rawCode,data){
-            _buildAliasMap(ts,data);
-            const map=window._aliasMap?.[ts]?.[type];
-            return map?.[rawCode]||rawCode;
+        function getAlias(ts,type,rawCode){
+            return GIS_ALIAS_MAP?.[ts]?.[type]?.[rawCode]||rawCode;
         }
         function _skOpts(ts,tk){
             const baseRows=(globalData||[]).map(r=>({Polje:r.Polje}));
