@@ -72,6 +72,11 @@
             border-color: var(--border);
             color: var(--text);
         }
+        [data-theme="dark"] .warning-box {
+            background: rgba(220,38,38,0.15);
+            border-color: var(--danger);
+            color: var(--text);
+        }
         [data-theme="dark"] .detail-section h3 {
             color: var(--text);
             border-color: var(--border);
@@ -397,7 +402,7 @@
         .subsubmenu-item.selected {
             background: #bee3f8;
             font-weight: 600;
-            color: #2c5282;
+            color: var(--accent);
         }
 
         .dropdown-item.razvod-nn {
@@ -467,7 +472,7 @@
         }
 
         .warning-box h4 {
-            color: #c53030;
+            color: var(--danger);
             margin-bottom: 10px;
             font-size: 16px;
         }
@@ -479,7 +484,7 @@
 
         .warning-box li {
             padding: 8px 0;
-            color: #742a2a;
+            color: var(--danger);
             font-size: 14px;
         }
 
@@ -491,7 +496,7 @@
         }
 
         .info-box h4 {
-            color: #2c5282;
+            color: var(--accent);
             margin-bottom: 10px;
             font-size: 16px;
         }
@@ -2375,16 +2380,16 @@
             if (globalNedodijeljeneInstalacije && globalNedodijeljeneInstalacije.length > 0) {
                 html += `
                     <div class="info-box" style="background: #fff5f5; border-color: #fc8181;">
-                        <h4 style="color: #c53030;">⚠️ Nedodijeljene instalacije</h4>
+                        <h4 style="color: var(--danger);">⚠️ Nedodijeljene instalacije</h4>
                         <p style="color: var(--text); margin-bottom: 10px;">
                             Sljedeće instalacije iz planiranih promjena <strong>nemaju odgovarajući strujni krug</strong> u trenutnom stanju:
                         </p>
-                        <ul style="list-style: none; padding-left: 0; max-height: 200px; overflow-y: auto; background: white; padding: 10px; border-radius: 5px; border: 1px solid #fc8181;">
+                        <ul style="list-style: none; padding-left: 0; max-height: 200px; overflow-y: auto; background: transparent; padding: 10px; border-radius: 5px; border: 1px solid #fc8181;">
                             ${globalNedodijeljeneInstalacije.map(sifra => 
-                                `<li style="padding: 5px 0; color: #c53030; font-family: 'Courier New', monospace; font-size: 13px;">• ${sifra}</li>`
+                                `<li style="padding: 5px 0; color: var(--danger); font-family: 'Courier New', monospace; font-size: 13px;">• ${sifra}</li>`
                             ).join('')}
                         </ul>
-                        <p style="color: #742a2a; font-size: 12px; margin-top: 10px; margin-bottom: 0;">
+                        <p style="color: var(--danger); font-size: 12px; margin-top: 10px; margin-bottom: 0;">
                             <strong>Ukupno: ${globalNedodijeljeneInstalacije.length} instalacija</strong>
                         </p>
                     </div>
@@ -2397,22 +2402,22 @@
 
                     <p style="margin-bottom: 5px;"><strong>Ukupna delta potrošnja: ${deltaPotrosnjaTotal >= 0 ? '+' : ''}${deltaPotrosnjaTotal.toFixed(2)} kW</strong></p>
                     <p style="margin-left: 15px; font-size: 13px;">• Dodijeljeno strujnim krugovima: <strong>${deltaPotrosnjaDodijeljeno.toFixed(2)} kW</strong></p>
-                    ${deltaPotrosnjaNedodijeljeno > 0.01 ? '<p style="margin-left: 15px; font-size: 13px; color: #d69e2e;">• Nedodijeljeno (samo trafo match): <strong>' + deltaPotrosnjaNedodijeljeno.toFixed(2) + ' kW</strong></p>' : ''}
+                    ${deltaPotrosnjaNedodijeljeno > 0.01 ? '<p style="margin-left: 15px; font-size: 13px; color: var(--warning);">• Nedodijeljeno (samo trafo match): <strong>' + deltaPotrosnjaNedodijeljeno.toFixed(2) + ' kW</strong></p>' : ''}
 
                     <p style="margin-bottom: 5px; margin-top: 10px;"><strong>Ukupna delta proizvodnja: ${deltaProizvodnjaTotal >= 0 ? '+' : ''}${deltaProizvodnjaTotal.toFixed(2)} kW</strong></p>
                     <p style="margin-left: 15px; font-size: 13px;">• Dodijeljeno strujnim krugovima: <strong>${deltaProizvodnjaDodijeljeno.toFixed(2)} kW</strong></p>
-                    ${deltaProizvodnjaNedodijeljeno > 0.01 ? '<p style="margin-left: 15px; font-size: 13px; color: #d69e2e;">• Nedodijeljeno (samo trafo match): <strong>' + deltaProizvodnjaNedodijeljeno.toFixed(2) + ' kW</strong></p>' : ''}
+                    ${deltaProizvodnjaNedodijeljeno > 0.01 ? '<p style="margin-left: 15px; font-size: 13px; color: var(--warning);">• Nedodijeljeno (samo trafo match): <strong>' + deltaProizvodnjaNedodijeljeno.toFixed(2) + ' kW</strong></p>' : ''}
 
                     ${noveElektraneTotal > 0 ? '<p style="margin-top: 10px;"><strong>Nove elektrane: +' + noveElektraneTotal + '</strong></p>' : ''}
                     ${noveElektraneZaPrikaz > 0 ? '<p style="margin-left: 15px; font-size: 13px;">• Dodijeljene: ' + noveElektraneDodijeljeno + '</p>' : ''}
-                    ${noveElektraneNedodijeljeno > 0 ? '<p style="margin-left: 15px; font-size: 13px; color: #d69e2e;">• Nedodijeljene: ' + noveElektraneNedodijeljeno + '</p>' : ''}
+                    ${noveElektraneNedodijeljeno > 0 ? '<p style="margin-left: 15px; font-size: 13px; color: var(--warning);">• Nedodijeljene: ' + noveElektraneNedodijeljeno + '</p>' : ''}
 
                     ${(noviPotr20kwDodijeljeno + noviPotr20kwNedodijeljeno) > 0 ? '<p style="margin-top: 10px;"><strong>Novi potrošači ≥20kW: +' + (noviPotr20kwDodijeljeno + noviPotr20kwNedodijeljeno) + '</strong></p>' : ''}
                     ${novi20kwZaPrikaz > 0 ? '<p style="margin-left: 15px; font-size: 13px;">• Dodijeljeni: ' + noviPotr20kwDodijeljeno + ' (snaga: +' + delta20kwSnagaDodijeljeno.toFixed(2) + ' kW)</p>' : ''}
-                    ${noviPotr20kwNedodijeljeno > 0 ? '<p style="margin-left: 15px; font-size: 13px; color: #d69e2e;">• Nedodijeljeni: ' + noviPotr20kwNedodijeljeno + ' (snaga: +' + delta20kwSnagaNedodijeljeno.toFixed(2) + ' kW)</p>' : ''}
+                    ${noviPotr20kwNedodijeljeno > 0 ? '<p style="margin-left: 15px; font-size: 13px; color: var(--warning);">• Nedodijeljeni: ' + noviPotr20kwNedodijeljeno + ' (snaga: +' + delta20kwSnagaNedodijeljeno.toFixed(2) + ' kW)</p>' : ''}
 
                     ${deltaPotrosnjaNedodijeljeno > 0.01 || deltaProizvodnjaNedodijeljeno > 0.01 ? 
-                        '<p style="margin-top: 15px; padding: 10px; background: #fef5e7; border-left: 3px solid #d69e2e; font-size: 13px;"><strong>⚠️ Napomena:</strong> Nedodijeljena snaga se odnosi na nove priključke za koje ne postoji točan strujni krug u prvoj tablici (samo trafostanica se poklapa).</p>' : 
+                        '<p style="margin-top: 15px; padding: 10px; background: rgba(217,119,6,0.08); border-left: 3px solid var(--warning); font-size: 13px;"><strong>⚠️ Napomena:</strong> Nedodijeljena snaga se odnosi na nove priključke za koje ne postoji točan strujni krug u prvoj tablici (samo trafostanica se poklapa).</p>' : 
                         ''}
                 </div>
             `;
